@@ -1,0 +1,119 @@
+.container,
+.container * {
+  box-sizing: border-box;
+}
+.container {
+  height: 52.45px;
+  position: relative;
+}
+.huge-icon {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: calc(50% - -644px);
+  top: 50%;
+  translate: 0 -50%;
+  overflow: visible;
+}
+.group-3 {
+  position: absolute;
+  inset: 0;
+}
+.rectangle-1 {
+  background: #ff0000;
+  border-radius: 50px;
+  opacity: 0.6;
+  width: 185px;
+  height: 47px;
+  position: absolute;
+  left: calc(50% - -415px);
+  top: 50%;
+  translate: 0 -50%;
+}
+.se-connecter {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  position: absolute;
+  left: calc(50% - -448px);
+  top: 50%;
+  translate: 0 -50%;
+}
+.rejoindre-la-communaut {
+  color: #007fff;
+  text-align: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 20px;
+  line-height: 0%;
+  letter-spacing: 0.025em;
+  font-weight: 400;
+  text-decoration: underline;
+  position: absolute;
+  left: calc(50% - -99px);
+  top: 50%;
+  translate: 0 -50%;
+}
+.search-group {
+  position: absolute;
+  inset: 0;
+}
+.rectangle-2 {
+  background: #dae0e6;
+  border-radius: 20px;
+  width: 490px;
+  height: 52.45px;
+  position: absolute;
+  left: calc(50% - 407px);
+  top: 50%;
+  translate: 0 -50%;
+}
+.huge-icon2 {
+  width: 1.53%;
+  height: 20.98px;
+  position: absolute;
+  right: 76.95%;
+  left: 21.52%;
+  top: 50%;
+  translate: 0 -50%;
+  overflow: visible;
+}
+.rechercher-sur-talk-space {
+  color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 15px;
+  line-height: 0%;
+  letter-spacing: 0.025em;
+  font-weight: 400;
+  position: absolute;
+  left: calc(50% - 338.47px);
+  top: 50%;
+  translate: 0 -50%;
+  width: 231.29px;
+}
+.talk {
+  color: #ff0000;
+  text-align: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 36px;
+  line-height: 0%;
+  letter-spacing: 0.025em;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 27px;
+}
+.space {
+  color: #000000;
+  text-align: center;
+  font-family: "Poppins-Regular", sans-serif;
+  font-size: 36px;
+  line-height: 0%;
+  letter-spacing: 0.025em;
+  font-weight: 400;
+  position: absolute;
+  left: 81px;
+  top: 27px;
+}
