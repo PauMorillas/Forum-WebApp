@@ -1,6 +1,7 @@
 package com.example.demo.repository.entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -26,7 +27,7 @@ public class Categoria {
 
 	// Representa la relacion
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ArrayList<Post> postsList;
+	private List<Post> postsList;
 
 	public Categoria() {
 		this.postsList = new ArrayList<>();

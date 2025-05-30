@@ -3,6 +3,7 @@ package com.example.demo.repository.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
@@ -28,11 +29,11 @@ public class Cliente implements Serializable {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ArrayList<Post> postsList;
+	private List<Post> postsList;
 	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ArrayList<Mensaje> msgsList;
+	private List<Mensaje> msgsList;
 	@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ArrayList<Comentario> commentsList;
+	private List<Comentario> commentsList;
 
 	public Cliente(Long id, String nomUsu, String passUsu, LocalDateTime createdAt) {
 		this.id = id;

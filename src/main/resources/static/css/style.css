@@ -1,0 +1,34 @@
+.nowrap {
+  text-wrap: nowrap;
+}
+
+.link {
+  text-decoration: none;
+  color: #ffffff;
+  transition: 0.2s ease;
+}
+
+.link:hover {
+  color: #efefef;
+}
+
+.text-white {
+  color: #ffffff;
+}
+
+.bg-white {
+  background-color: #ffffff;
+}
+
+.text-royalblue {
+  color: #4169e1;
+}
+
+#brand {
+  color: #ff0000;
+  font-weight: 600;
+}
+
+.brand-name-span {
+  color: #343a40;
+}

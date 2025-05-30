@@ -2,6 +2,7 @@ package com.example.demo.repository.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,7 +28,7 @@ public class Post {
 	private String content;
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
-
+	private long likes;
 	@ManyToOne
 	@JoinColumn(name = "client_id")
 	@ToString.Exclude
@@ -37,7 +38,7 @@ public class Post {
 	@ToString.Exclude
 	private Categoria category;
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-	private ArrayList<Comentario> commentsList;
+	private List<Comentario> commentsList;
 
 	public Post() {
 		this.commentsList = new ArrayList<>();
