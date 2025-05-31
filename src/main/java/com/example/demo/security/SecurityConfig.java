@@ -26,7 +26,7 @@ public class SecurityConfig {
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.loginPage("/login") // Html propio
-				.defaultSuccessUrl("/dashboard")
+						.defaultSuccessUrl("/dashboard")
 				.failureUrl("/login?error=true")
 			);
 
