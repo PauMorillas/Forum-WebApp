@@ -28,12 +28,11 @@ public class Post {
 	private String content;
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
-	private long likes;
 	@ManyToOne
 	@JoinColumn(name = "client_id")
 	@ToString.Exclude
 	private Cliente client;
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "category_id")
 	@ToString.Exclude
 	private Categoria category;
@@ -43,5 +42,4 @@ public class Post {
 	public Post() {
 		this.commentsList = new ArrayList<>();
 	}
-
 }

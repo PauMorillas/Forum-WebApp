@@ -102,7 +102,7 @@
           <!-- Botón a la izquierda -->
           <button class="btn btn-outline-primary" type="button">
             <i class="fa-solid fa-plus"></i>
-            Nueva Publicación
+            New Post
           </button>
 
           <!-- Dropdown a la derecha -->
@@ -135,8 +135,13 @@
           <!-- Autor y Fecha -->
           <div class="d-flex justify-content-between align-items-center mb-2">
             <!-- TODO: LINKEAR BIEN EL AUTOR CON EL ID DEL USU -->
-            <div class="fw-semibold text-primary">@{post.author}</div>
-            <div class="text-muted small" th:text="${post.createdAt}">
+            <div class="fw-semibold text-primary">
+              <p th:text="${post.clientDTO.username}"></p>
+            </div>
+            <div
+              class="text-muted small"
+              th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}"
+            >
               @{post.createdAt}
             </div>
           </div>
@@ -152,18 +157,23 @@
           <!-- Etiquetas / Categoría / Reacciones -->
           <div class="d-flex justify-content-between align-items-center mt-3">
             <div>
-              <span class="badge bg-secondary">@{post.category.name}</span>
+              <span
+                class="badge bg-secondary"
+                th:text="${post.categoryDTO.name}"
+                >@{post.category.name}</span
+              >
             </div>
             <div>
-              <button
-                class="btn btn-sm btn-outline-success me-2"
-                th:text="${post.likes}"
-              >
-                👍 @{post.likes}
+              <button class="btn btn-sm btn-outline-danger me-2 like-container">
+                <i class="fa-regular fa-heart"></i>
+                <span th:utext="${post.likes}" class="ms-1"></span>
               </button>
               <!-- TODO: HACER EL VINCULADO CON LA LISTA DE COMENTARIOS O MOSTRAR SOLO EL NUMERO DE COMENTARIOS ETC -->
-              <button class="btn btn-sm btn-outline-danger">
-                💬 @{post.comments}
+              <button
+                class="btn btn-sm btn-outline-secondary comment-container"
+              >
+                <i class="fa-regular fa-comment"></i>
+                <span th:text="${post.comments}" class="ms-1"></span>
               </button>
             </div>
           </div>
@@ -186,5 +196,7 @@
       src="https://kit.fontawesome.com/1d6284ddc7.js"
       crossorigin="anonymous"
     ></script>
+
+    <script src="/js/scripts.js" defer></script>
   </body>
 </html>

@@ -32,3 +32,21 @@
 .brand-name-span {
   color: #343a40;
 }
+
+/* Animaciones */
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.icon-animate {
+  animation: pop 0.3s ease;
+}
