@@ -2,6 +2,10 @@
   text-wrap: nowrap;
 }
 
+.fs-7 {
+  font-size: 0.92rem !important;
+}
+
 .link {
   text-decoration: none;
   color: #ffffff;
