@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.example.demo.model.dto.PostDTO;
 import com.example.demo.repository.dao.ComentarioRepository;
 import com.example.demo.repository.dao.LikeRepository;
 import com.example.demo.repository.dao.PostRepository;
+import com.example.demo.repository.entity.Post;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -35,14 +37,19 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostDTO findById(PostDTO postDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<Post> postOptional = postRepository.findById(postDTO.getId());
+
+		if (postOptional.isPresent()) {
+			postDTO = PostDTO.convertToDTO(postOptional.get(), likeRepository.countByPostId(postDTO.getId()),
+					comentarioRepository.countByPostId(postDTO.getId()));
+		}
+
+		return postDTO;
 	}
 
 	@Override
 	public void save(PostDTO postDTO) {
-		// TODO Auto-generated method stub
-
+		postRepository.save(PostDTO.convertToEntity(postDTO));
 	}
 
 	@Override

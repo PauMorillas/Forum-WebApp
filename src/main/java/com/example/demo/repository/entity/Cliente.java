@@ -25,6 +25,7 @@ public class Cliente implements Serializable {
 	private Long id;
 	private static final long serialVersionUID = 1L;
 	private String username;
+	private String email;
 	private String pass;
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;

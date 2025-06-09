@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- Iconos de fontawesome -->
+    <script
+      src="https://kit.fontawesome.com/1d6284ddc7.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Talk Space - Login</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" id="brand" href="#"
+          >Talk <span class="brand-name-span">Space</span></a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarSupportedContent"
+        >
+          <ul class="navbar-nav mb-2 mb-lg-0 me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Community</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Topics
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="#">Tech</a></li>
+                <li><a class="dropdown-item" href="#">VideoGames</a></li>
+                <li><a class="dropdown-item" href="#">Anime & Manga</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="#">General</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <div class="d-flex justify-content-center w-100 px-2">
+            <form
+              class="d-flex flex-grow-1"
+              style="max-width: 450px; width: 100%"
+            >
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-primary" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+
+          <!-- Botones al final -->
+          <div class="d-flex ms-auto" th:unless="${hayUsuario}">
+            <button class="btn btn-danger me-2 nowrap" type="button">
+              <a href="/login" class="link-pers">Sign in</a>
+            </button>
+            <button class="btn btn-sm btn-link nowrap" type="button">
+              <a href="/register" class="link-primary">Sign up</a>
+            </button>
+          </div>
+
+          <!-- Perfil usuario -->
+          <div class="d-flex ms-auto" th:if="${hayUsuario}">
+            <div class="dropdown">
+              <a
+                class="btn btn-outline-primary dropdown-toggle"
+                href="#"
+                role="button"
+                id="userMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                th:text="${nombreUsuario}"
+                >Usuario</a
+              >
+
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="userMenu"
+              >
+                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <form
+                    th:action="@{/logout}"
+                    method="post"
+                    class="dropdown-item p-0 m-0 border-0 bg-transparent"
+                  >
+                    <button
+                      type="submit"
+                      class="btn btn-danger w-100 text-start h-100"
+                    >
+                      Log out
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mostrar mensaje si NO hay usuario -->
+    <div
+      class="alert alert-info d-none"
+      id="loginAlert"
+      role="alert"
+      tabindex="0"
+    >
+      You should sign in before posting.
+      <a href="/login" class="alert-link">Sign in here</a> ; &rbrack;
+    </div>
+
+    <main class="container mt-5">
+      <!-- Post completo -->
+      <div class="card shadow-sm border-0 rounded-4 mb-5">
+        <div class="card-body px-5 py-4">
+          <!-- Cabecera: autor y fecha -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div
+              class="text-primary fw-bold"
+              th:text="${postDTO.clientDTO.username}"
+            >
+              Autor
+            </div>
+            <div
+              class="text-muted small"
+              th:text="${#temporals.format(postDTO.createdAt, 'dd MMM yyyy HH:mm')}"
+            >
+              Fecha
+            </div>
+          </div>
+
+          <!-- Título -->
+          <h2 class="card-title mb-3" th:text="${postDTO.title}">
+            Título del post
+          </h2>
+
+          <!-- Contenido -->
+          <p class="card-text fs-5" th:utext="${postDTO.content}">
+            Contenido del post.
+          </p>
+
+          <!-- Categoría y acciones -->
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <span
+              class="badge bg-secondary fs-6"
+              th:text="${postDTO.categoryDTO.name}"
+              >Categoría</span
+            >
+
+            <div>
+              <button
+                class="btn btn-sm btn-outline-danger me-2 like-container"
+                th:onclick="|toggleLike(${postDTO.id}, this)|"
+              >
+                <i
+                  th:class="${likedPostIds.contains(postDTO.id)} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"
+                ></i>
+                <span th:text="${postDTO.likes}" class="ms-1"></span>
+              </button>
+
+              <!-- TODO: HACER EL VINCULADO CON LA LISTA DE COMENTARIOS O MOSTRAR SOLO EL NUMERO DE COMENTARIOS ETC -->
+              <button
+                class="btn btn-sm btn-outline-secondary comment-container"
+              >
+                <i class="fa-regular fa-comment"></i>
+                <span th:text="${postDTO.comments}" class="ms-1"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comentarios -->
+      <div class="card border-0 shadow-sm rounded-4 mb-5">
+        <div class="card-body px-5 py-4">
+          <h4 class="mb-4">Comentarios</h4>
+
+          <!-- Lista de comentarios -->
+          <div th:if="${#lists.isEmpty(comentarios)}">
+            <p class="text-muted">Todavía no hay comentarios.</p>
+          </div>
+
+          <div
+            th:each="comentario : ${comentarios}"
+            class="border-bottom pb-3 mb-3"
+          >
+            <div class="d-flex justify-content-between">
+              <strong
+                class="text-primary"
+                th:text="${comentario.clientDTO.username}"
+                >User</strong
+              >
+              <span
+                class="text-muted small"
+                th:text="${#temporals.format(comentario.createdAt, 'dd MMM yyyy HH:mm')}"
+                >Fecha</span
+              >
+            </div>
+            <p class="mt-2" th:text="${comentario.content}">
+              Contenido del comentario
+            </p>
+          </div>
+
+          <!-- Formulario nuevo comentario -->
+          <div th:if="${hayUsuario}">
+            <form
+              method="post"
+              th:action="@{/comments/new}"
+              th:object="${comentarioDTO}"
+            >
+              <input
+                type="hidden"
+                th:field="*{postDTO.id}"
+                th:value="${postDTO.id}"
+              />
+              <div class="mb-3">
+                <textarea
+                  class="form-control"
+                  id="comment-textarea"
+                  th:field="*{content}"
+                  rows="3"
+                  placeholder="Escribe un comentario..."
+                  required
+                ></textarea>
+              </div>
+              <button class="btn btn-primary" type="submit">Comment</button>
+            </form>
+          </div>
+
+          <!-- Aviso si no está logueado -->
+          <div class="alert alert-info mt-3" th:unless="${hayUsuario}">
+            You should <a href="/login" class="alert-link">sign in</a> to
+            comment.
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+      integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+      integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+      crossorigin="anonymous"
+    ></script>
+
+    <script th:inline="javascript">
+      window.hayUsuario = [[${hayUsuario}]];
+    </script>
+
+    <script src="/js/scripts.js" defer></script>
+  </body>
+</html>

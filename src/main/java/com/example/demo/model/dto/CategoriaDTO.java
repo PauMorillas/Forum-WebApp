@@ -22,4 +22,13 @@ public class CategoriaDTO {
 
 		return categoriaDTO;
 	}
+
+	public static Categoria convertToEntity(CategoriaDTO cDTO) {
+		Categoria categoria = new Categoria();
+		categoria.setId(cDTO.getId());
+		categoria.setName(cDTO.getName());
+		categoria.setDescription(cDTO.getDescription());
+
+		return categoria;
+	}
 }

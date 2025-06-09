@@ -40,6 +40,8 @@ public class Post {
 	private List<Comentario> commentsList;
 
 	public Post() {
+		this.client = new Cliente();
 		this.commentsList = new ArrayList<>();
+		this.category = new Categoria();
 	}
 }

@@ -10,9 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "likes")
+@Data
 public class Like {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +31,8 @@ public class Like {
 	@Column(name = "liked_at")
 	private LocalDateTime likedAt;
 
+	public Like() {
+		this.client = new Cliente();
+		this.post = new Post();
+	}
 }

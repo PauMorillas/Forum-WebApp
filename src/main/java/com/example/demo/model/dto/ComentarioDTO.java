@@ -2,6 +2,7 @@ package com.example.demo.model.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.demo.repository.entity.Cliente;
 import com.example.demo.repository.entity.Comentario;
 import com.example.demo.repository.entity.Post;
 
@@ -17,7 +18,7 @@ public class ComentarioDTO {
 	@ToString.Exclude
 	private ClienteDTO clientDTO;
 	@ToString.Exclude
-	private Post postDTO;
+	private PostDTO postDTO;
 
 	public ComentarioDTO() {
 
@@ -33,5 +34,16 @@ public class ComentarioDTO {
 
 		return comentarioDTO;
 	}
+
+	public static Comentario convertToEntity(ComentarioDTO dto, Cliente cli, Post post) {
+        Comentario comentario = new Comentario();
+        comentario.setId(dto.getId());
+        comentario.setContent(dto.getContent());
+		comentario.setCreatedAt(LocalDateTime.now());
+        comentario.setClient(cli);
+        comentario.setPost(post);
+
+        return comentario;
+    }
 
 }

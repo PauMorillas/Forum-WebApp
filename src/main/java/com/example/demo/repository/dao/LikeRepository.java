@@ -1,6 +1,7 @@
 package com.example.demo.repository.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +16,9 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 	// Ver si un cliente ya dio like a un post
 	boolean existsByClientIdAndPostId(Long clientId, Long postId);
 
-	// (Opcional) obtener IDs de posts que le gustaron a un cliente
+	// Obtener IDs de posts que le gustaron a un cliente
 	@Query("SELECT l.post.id FROM Like l WHERE l.client.id = :clientId")
 	List<Long> findLikedPostIdsByClient(@Param("clientId") Long clientId);
+
+	Optional<Like> findByClientIdAndPostId(Long clientId, Long postId);
 }
