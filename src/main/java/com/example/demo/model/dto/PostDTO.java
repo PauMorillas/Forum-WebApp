@@ -1,8 +1,6 @@
 package com.example.demo.model.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.example.demo.repository.entity.Post;
 
@@ -27,20 +25,13 @@ public class PostDTO {
 	private ClienteDTO clientDTO;
 	@ToString.Exclude
 	private CategoriaDTO categoryDTO;
-	@ToString.Exclude
-	private List<ComentarioDTO> commentsDTOList;
+//	@ToString.Exclude
+//	private List<Comentario> commentsDTOList;
 
 	public PostDTO() {
 		clientDTO = new ClienteDTO();
 		categoryDTO = new CategoriaDTO();
-		commentsDTOList = new ArrayList<>();
-	}
-
-	public PostDTO(Long id) {
-		this.id = id;
-		clientDTO = new ClienteDTO();
-		categoryDTO = new CategoriaDTO();
-		commentsDTOList = new ArrayList<>();
+//		commentsDTOList = new ArrayList<>();
 	}
 
 	// TODO: HACER los CONVERT
@@ -52,24 +43,11 @@ public class PostDTO {
 		postDTO.setCreatedAt(p.getCreatedAt());
 		postDTO.setLikes(likes);
 		postDTO.setComments(comments);
-
 		postDTO.setClientDTO(ClienteDTO.convertToDTO(p.getClient()));
+
 		postDTO.setCategoryDTO(CategoriaDTO.convertToDTO(p.getCategory()));
 
 		return postDTO;
-	}
-
-	public static Post convertToEntity(PostDTO postDTO) {
-		Post post = new Post();
-		post.setId(postDTO.getId());
-		post.setTitle(postDTO.getTitle());
-		post.setContent(postDTO.getContent());
-		post.setCreatedAt(postDTO.getCreatedAt());
-
-		post.setClient(ClienteDTO.convertToEntity(postDTO.getClientDTO()));
-		post.setCategory(CategoriaDTO.convertToEntity(postDTO.getCategoryDTO()));
-
-		return post;
 	}
 
 }
