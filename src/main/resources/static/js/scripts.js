@@ -8,17 +8,21 @@ const csrfHeader = document
   .querySelector('meta[name="_csrf_header"]')
   .getAttribute("content");
 
-// Initialize Quill editor
-const quill = new Quill("#quill-editor", {
-  theme: "snow",
-});
+const quillContainer = document.getElementById("quill-editor");
 
-const formPost = document.getElementById("formPost");
-const hiddenInput = document.getElementById("hiddenContent");
-if (formPost != null) {
-  formPost.addEventListener("submit", function () {
-    hiddenInput.value = quill.root.innerHTML; // Copiamos el HTML en ese campo
+if (quillContainer) {
+  const quill = new Quill("#quill-editor", {
+    theme: "snow",
   });
+
+  const formPost = document.getElementById("formPost");
+  const hiddenInput = document.getElementById("hiddenContent");
+
+  if (formPost && hiddenInput) {
+    formPost.addEventListener("submit", function () {
+      hiddenInput.value = quill.root.innerHTML; // Copiamos el HTML en ese campo
+    });
+  }
 }
 
 Array.from(btnsLike).forEach((btn) => {

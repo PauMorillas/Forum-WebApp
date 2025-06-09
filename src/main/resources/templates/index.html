@@ -4,12 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
+    />
+    <!-- Iconos de fontawesome -->
+    <script
+      src="https://kit.fontawesome.com/1d6284ddc7.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- CSS del Editor de texto Quill -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+      rel="stylesheet"
     />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <title>Talk Space</title>
@@ -65,7 +77,6 @@
               </ul>
             </li>
           </ul>
-
           <div class="d-flex justify-content-center w-100 px-2">
             <form
               class="d-flex flex-grow-1"
@@ -84,23 +95,77 @@
           </div>
 
           <!-- Botones al final -->
-          <div class="d-flex ms-auto">
+          <div class="d-flex ms-auto" th:unless="${hayUsuario}">
             <button class="btn btn-danger me-2 nowrap" type="button">
-              <a href="#" class="link">Sign in</a>
+              <a href="/login" class="link-pers">Sign in</a>
             </button>
             <button class="btn btn-sm btn-link nowrap" type="button">
-              <a href="#" class="link-primary">Sign up</a>
+              <a href="/register" class="link-primary">Sign up</a>
             </button>
+          </div>
+
+          <!-- Perfil usuario -->
+          <div class="d-flex ms-auto" th:if="${hayUsuario}">
+            <div class="dropdown">
+              <a
+                class="btn btn-outline-primary dropdown-toggle"
+                href="#"
+                role="button"
+                id="userMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                th:text="${nombreUsuario}"
+                >Usuario</a
+              >
+
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="userMenu"
+              >
+                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <form
+                    th:action="@{/logout}"
+                    method="post"
+                    class="dropdown-item p-0 m-0 border-0 bg-transparent"
+                  >
+                    <button
+                      type="submit"
+                      class="btn btn-danger w-100 text-start h-100"
+                    >
+                      Log out
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </nav>
 
+    <!-- Mostrar mensaje si NO hay usuario -->
+    <div
+      class="alert alert-info d-none"
+      id="loginAlert"
+      role="alert"
+      tabindex="0"
+    >
+      You should sign in before posting.
+      <a href="/login" class="alert-link">Sign in here</a> ; &rbrack;
+    </div>
+
     <main class="container">
       <section class="container-lg mb-4 mt-4">
         <div class="d-flex justify-content-between align-items-center">
           <!-- Botón a la izquierda -->
-          <button class="btn btn-outline-primary" type="button">
+          <button
+            class="btn btn-outline-primary"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#newPostModal"
+          >
             <i class="fa-solid fa-plus"></i>
             New Post
           </button>
@@ -128,8 +193,8 @@
       </section>
 
       <div
-        class="card mb-3 shadow-sm border-0 rounded-3"
-        th:each=" post: ${listaPosts}"
+        class="card mb-3 shadow border-0 rounded-3"
+        th:each="post: ${listaPosts}"
       >
         <div class="card-body">
           <!-- Autor y Fecha -->
@@ -150,12 +215,14 @@
           <h5 class="card-title mb-2" th:text="${post.title}"></h5>
 
           <!-- Contenido -->
-          <p class="card-text text-body" th:text="${post.content}">
+          <p class="card-text text-body" th:utext="${post.content}">
             ${post.content}
           </p>
 
           <!-- Etiquetas / Categoría / Reacciones -->
-          <div class="d-flex justify-content-between align-items-center mt-3">
+          <div
+            class="d-flex justify-content-between align-items-center mt-3 mb-2"
+          >
             <div>
               <span
                 class="badge bg-secondary"
@@ -164,22 +231,167 @@
               >
             </div>
             <div>
-              <button class="btn btn-sm btn-outline-danger me-2 like-container">
-                <i class="fa-regular fa-heart"></i>
-                <span th:utext="${post.likes}" class="ms-1"></span>
+              <button
+                class="btn btn-sm btn-outline-danger me-2 like-container"
+                th:onclick="|toggleLike(${post.id}, this)|"
+              >
+                <i
+                  th:class="${likedPostIds.contains(post.id)} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"
+                ></i>
+                <span th:text="${post.likes}" class="ms-1"></span>
               </button>
-              <!-- TODO: HACER EL VINCULADO CON LA LISTA DE COMENTARIOS O MOSTRAR SOLO EL NUMERO DE COMENTARIOS ETC -->
+
               <button
                 class="btn btn-sm btn-outline-secondary comment-container"
+                th:onclick="|goToPostAndFocusComment(${post.id})|"
               >
                 <i class="fa-regular fa-comment"></i>
                 <span th:text="${post.comments}" class="ms-1"></span>
               </button>
             </div>
           </div>
+
+          <div class="container d-flex align-content-end px-0">
+            <p class="my-0">
+              <a
+                th:href="@{/posts/{id}(id=${post.id})}"
+                class="link link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover"
+                >Read more</a
+              >
+            </p>
+          </div>
         </div>
       </div>
     </main>
+
+    <!-- Formulario para el post -->
+    <div
+      class="modal fade"
+      id="newPostModal"
+      tabindex="-1"
+      aria-labelledby="newPostModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newPostModalLabel">Create New Post</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <!-- Formulario real, si hay usuario -->
+          <div>
+            <form
+              th:action="@{/posts/create}"
+              th:object="${postDTO}"
+              method="post"
+              id="formPost"
+            >
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="title" class="form-label">Title</label>
+                  <input
+                    name="title"
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    th:field="*{title}"
+                    required
+                  />
+                </div>
+                <label class="form-label">Content</label>
+                <div class="mb-3" id="quill-editor">
+                  <!-- Input oculto que envía el contenido con el form -->
+                  <input
+                    type="hidden"
+                    name="content"
+                    id="hiddenContent"
+                    th:field="*{content}"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="category" class="form-label">Category</label>
+                  <select
+                    name="categoryId"
+                    class="form-select"
+                    id="category"
+                    th:field="*{categoryDTO.id}"
+                    required
+                  >
+                    <option value="" disabled selected>
+                      -- Choose a category --
+                    </option>
+                    <option
+                      th:each="cat : ${listaCategoriasDTO}"
+                      th:value="${cat.id}"
+                      th:text="${cat.name}"
+                    ></option>
+                  </select>
+                </div>
+                <!-- Este input invisible es el que se enviará con el form -->
+                <input
+                  type="hidden"
+                  name="content"
+                  id="hiddenContent"
+                  th:field="*{content}"
+                  required
+                />
+              </div>
+
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">Post</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    78
+
+    <!-- Toast de bienvenida -->
+    <div
+      class="position-fixed bottom-0 end-0 p-3"
+      style="z-index: 11"
+      th:if="${hayUsuario}"
+      id="toastWrapper"
+      hidden
+    >
+      <div
+        class="toast"
+        id="welcomeToast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Welcome!</strong>
+          <small>Now</small>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body">
+          Hi <strong th:text="${nombreUsuario}">user</strong>, we're happy to
+          see u again!
+        </div>
+      </div>
+    </div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
@@ -192,10 +404,12 @@
       crossorigin="anonymous"
     ></script>
 
-    <script
-      src="https://kit.fontawesome.com/1d6284ddc7.js"
-      crossorigin="anonymous"
-    ></script>
+    <!-- Include the Quill library -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+    <script th:inline="javascript">
+      window.hayUsuario = [[${hayUsuario}]];
+    </script>
 
     <script src="/js/scripts.js" defer></script>
   </body>
