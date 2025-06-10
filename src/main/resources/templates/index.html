@@ -29,7 +29,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" id="brand" href="#"
+        <a class="navbar-brand" id="brand" href="/"
           >Talk <span class="brand-name-span">Space</span></a
         >
         <button
@@ -50,7 +50,7 @@
         >
           <ul class="navbar-nav mb-2 mb-lg-0 me-auto">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Community</a>
@@ -145,18 +145,17 @@
       </div>
     </nav>
 
-    <!-- Mostrar mensaje si NO hay usuario -->
-    <div
-      class="alert alert-info d-none"
-      id="loginAlert"
-      role="alert"
-      tabindex="0"
-    >
-      You should sign in before posting.
-      <a href="/login" class="alert-link">Sign in here</a> ; &rbrack;
-    </div>
-
     <main class="container">
+      <!-- Mostrar mensaje si NO hay usuario -->
+      <div
+        class="alert alert-info d-none px-0"
+        id="loginAlert"
+        role="alert"
+        tabindex="0"
+      >
+        You should sign in before posting.
+        <a href="/login" class="alert-link"> Sign in here</a> ; &rbrack;
+      </div>
       <section class="container-lg mb-4 mt-4">
         <div class="d-flex justify-content-between align-items-center">
           <!-- Botón a la izquierda -->
@@ -359,7 +358,6 @@
         </div>
       </div>
     </div>
-    78
 
     <!-- Toast de bienvenida -->
     <div

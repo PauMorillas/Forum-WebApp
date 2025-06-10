@@ -75,3 +75,15 @@
   box-shadow: none !important;
   cursor: not-allowed;
 }
+
+/* Contenedor de alertas */
+#loginAlert {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  /* width: 69.75rem; */
+  text-align: center;
+}
+
+#loginAlert {
+}

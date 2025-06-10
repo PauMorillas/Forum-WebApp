@@ -32,7 +32,7 @@
         <div
           class="d-flex flex-row justify-content-center align-items-center mb-3 px-0"
         >
-          <h4 class="fw-bolder text-decoration-underline me-3">Sign Up</h4>
+          <h4 class="fw-bold text-decoration-underline me-3">Sign Up</h4>
           <i class="fa-regular fa-id-card"></i>
         </div>
         <form th:action="@{/register}" th:object="${cliente}" method="post">
@@ -83,7 +83,18 @@
             th:name="${_csrf.parameterName}"
             th:value="${_csrf.token}"
           />
-          <button type="submit" class="btn btn-primary w-100">Register</button>
+          <button type="submit" class="btn btn-primary w-100">
+            Register
+
+            <i class="fa-regular fa-id-card ms-2"></i>
+          </button>
+
+          <div class="container px-0 mt-2">
+            <a class="link link-info text-muted fs-8 link-pers" href="/login"
+              >Already have an account?
+              <span class="text-decoration-underline">Log in here.</span></a
+            >
+          </div>
         </form>
       </div>
     </main>
