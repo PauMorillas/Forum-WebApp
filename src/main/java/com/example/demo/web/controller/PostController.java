@@ -63,6 +63,7 @@ public class PostController {
 		boolean hayUsuario = UsuarioSesionUtils.hayUsuarioEnSesion();
 		String nombreUsu = null;
 		List<Long> likedPostIds = new ArrayList<>();
+		List<CategoriaDTO> listaCategoriasDTO = categoriaService.findAll();
 
 		ModelAndView mav = new ModelAndView("post-info");
 
@@ -81,6 +82,7 @@ public class PostController {
 		mav.addObject("hayUsuario", hayUsuario);
 		mav.addObject("likedPostIds", likedPostIds);
 		mav.addObject("nombreUsuario", nombreUsu);
+		mav.addObject("listaCategoriasDTO", listaCategoriasDTO);
 
 		return mav;
 	}

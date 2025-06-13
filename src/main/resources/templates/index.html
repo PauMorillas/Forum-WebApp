@@ -323,16 +323,15 @@
                   />
                 </div>
                 <label class="form-label">Content</label>
-                <div class="mb-3" id="quill-editor">
-                  <!-- Input oculto que envía el contenido con el form -->
-                  <input
-                    type="hidden"
-                    name="content"
-                    id="hiddenContent"
-                    th:field="*{content}"
-                    required
-                  />
-                </div>
+                <!-- Input oculto que envia el contenido con el form -->
+                <div class="mb-3" id="quill-editor"></div>
+                <input
+                  type="hidden"
+                  name="content"
+                  id="hiddenContent"
+                  th:field="*{content}"
+                  required
+                />
                 <div class="mb-3">
                   <label for="category" class="form-label">Category</label>
                   <select
@@ -362,7 +361,9 @@
                 >
                   Cancel
                 </button>
-                <button type="submit" class="btn btn-primary">Post</button>
+                <button type="submit" class="btn btn-primary" id="btnSubmit">
+                  Post
+                </button>
               </div>
             </form>
           </div>

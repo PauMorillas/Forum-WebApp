@@ -62,26 +62,38 @@
                 Topics
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Tech</a></li>
-                <li><a class="dropdown-item" href="#">VideoGames</a></li>
-                <li><a class="dropdown-item" href="#">Anime & Manga</a></li>
-                <li><hr class="dropdown-divider" /></li>
                 <li>
-                  <a class="dropdown-item" href="#">General</a>
+                  <a class="dropdown-item" th:href="@{/}">All Topics</a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li th:each="categoria : ${listaCategoriasDTO}">
+                  <a
+                    class="dropdown-item"
+                    th:href="@{/posts/search/category(categoryName=${categoria.name})}"
+                    th:text="${categoria.name}"
+                  >
+                    Category Name
+                  </a>
                 </li>
               </ul>
             </li>
           </ul>
-          <div class="d-flex justify-content-center w-100 px-2">
+
+          <div
+            class="d-flex justify-content-start justify-content-lg-center w-100 px-0"
+          >
             <form
               class="d-flex flex-grow-1"
               style="max-width: 450px; width: 100%"
+              action="/posts/search/text"
+              method="get"
             >
               <input
                 class="form-control me-2"
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
+                name="query"
               />
               <button class="btn btn-outline-primary" type="submit">
                 Search
@@ -89,14 +101,13 @@
             </form>
           </div>
 
-          <!-- Botones al final -->
-          <div class="d-flex ms-auto" th:unless="${hayUsuario}">
-            <button class="btn btn-danger me-2 nowrap" type="button">
-              <a href="/login" class="link-pers">Sign in</a>
-            </button>
-            <button class="btn btn-sm btn-link nowrap" type="button">
-              <a href="/register" class="link-primary">Sign up</a>
-            </button>
+          <!-- Botones de la sesión -->
+          <div
+            class="d-flex ms-auto align-items-center"
+            th:unless="${hayUsuario}"
+          >
+            <a href="/login" class="btn btn-danger me-2 nowrap">Sign in</a>
+            <a href="/register" class="btn btn-link nowrap">Sign up</a>
           </div>
 
           <!-- Perfil usuario -->

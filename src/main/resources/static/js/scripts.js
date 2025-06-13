@@ -13,7 +13,7 @@ let loginAlert;
 let newPostModalElement;
 let newPostModal;
 let newPostBtn;
-let quillEditor;
+let quillInstance; // Instancia real de Quill
 let quillFormPost;
 let quillHiddenInput;
 
@@ -62,9 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loginAlert = document.getElementById("loginAlert");
   newPostBtn = document.getElementById("btnNewPost");
   newPostModalElement = document.getElementById("newPostModal");
-  quillEditor = document.getElementById("quill-editor");
+  const quillContainer = document.getElementById("quill-editor");
   quillFormPost = document.getElementById("formPost");
   quillHiddenInput = document.getElementById("hiddenContent");
+  const btnSubmit = document.getElementById("btnSubmit");
 
   // Inicializar el modal de Bootstrap
   if (newPostModalElement) {
@@ -72,14 +73,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 2. Lógica para el Editor Quill (si lo hay en la página)
-  if (quillEditor) {
+  if (quillContainer) {
     const quill = new Quill("#quill-editor", {
       theme: "snow",
     });
 
-    if (quillFormPost && quillHiddenInput) {
-      quillFormPost.addEventListener("submit", () => {
-        quillHiddenInput.value = quill.root.innerHTML;
+    if (quillFormPost) {
+      quillFormPost.addEventListener("submit", function (e) {
+        if (quillContainer) {
+          const content = quill.getSemanticHTML();
+          if (!content || content === "<p><br></p>") {
+            e.preventDefault(); // evita enviar el formulario vacío
+            return;
+          }
+
+          quillHiddenInput.value = content;
+        } else {
+          e.preventDefault();
+          console.error("Editor Quill no inicializado.");
+        }
       });
     }
   }
