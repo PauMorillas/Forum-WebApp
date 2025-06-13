@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,8 +55,48 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void delete(PostDTO postDTO) {
-		// TODO Auto-generated method stub
-
+		postRepository.delete(PostDTO.convertToEntity(postDTO));
 	}
 
+	public List<PostDTO> searchByTitle(String title) {
+		List<Post> posts = postRepository.findByTitleContainingIgnoreCase(title);
+		return posts.stream()
+				.map(p -> PostDTO.convertToDTO(p, likeRepository.countByPostId(p.getId()),
+						comentarioRepository.countByPostId(p.getId())))
+				.collect(Collectors.toList());
+	}
+
+	public List<PostDTO> searchByContent(String content) {
+		List<Post> posts = postRepository.findByContentContainingIgnoreCase(content);
+		return posts.stream().map(p -> PostDTO.convertToDTO(p, likeRepository.countByPostId(p.getId()),
+				comentarioRepository.countByPostId(p.getId()))).collect(Collectors.toList());
+	}
+
+	public List<PostDTO> searchByCategory(String categoryName) {
+		List<Post> posts = postRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+		return posts.stream().map(p -> PostDTO.convertToDTO(p, likeRepository.countByPostId(p.getId()),
+				comentarioRepository.countByPostId(p.getId()))).collect(Collectors.toList());
+	}
+
+	/**
+	 * Busca posts priorizando el título y luego el contenido. Si un post coincide
+	 * por título, no se buscará en contenido. Si no hay resultados por título, se
+	 * buscan en contenido.
+	 */
+	public List<PostDTO> searchByTitleThenContent(String query) {
+		List<Post> postsResult = new ArrayList<>();
+
+		// 1. Buscar por título
+		List<Post> postsByTitle = postRepository.findByTitleContainingIgnoreCase(query);
+		postsResult.addAll(postsByTitle);
+
+		// 2. Si encontramos posts por título, los devolvemos directamente y no buscamos
+		// por contenido
+		if (!postsByTitle.isEmpty()) {
+			return searchByTitle(query);
+		} else {
+			// Si NO hay posts por título, entonces buscamos por contenido
+			return searchByContent(query);
+		}
+	}
 }

@@ -67,26 +67,38 @@
                 Topics
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Tech</a></li>
-                <li><a class="dropdown-item" href="#">VideoGames</a></li>
-                <li><a class="dropdown-item" href="#">Anime & Manga</a></li>
-                <li><hr class="dropdown-divider" /></li>
                 <li>
-                  <a class="dropdown-item" href="#">General</a>
+                  <a class="dropdown-item" th:href="@{/}">All Topics</a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li th:each="categoria : ${listaCategoriasDTO}">
+                  <a
+                    class="dropdown-item"
+                    th:href="@{/posts/search/category(categoryName=${categoria.name})}"
+                    th:text="${categoria.name}"
+                  >
+                    Category Name
+                  </a>
                 </li>
               </ul>
             </li>
           </ul>
-          <div class="d-flex justify-content-center w-100 px-2">
+
+          <div
+            class="d-flex justify-content-start justify-content-lg-center w-100 px-0"
+          >
             <form
               class="d-flex flex-grow-1"
               style="max-width: 450px; width: 100%"
+              action="/posts/search/text"
+              method="get"
             >
               <input
                 class="form-control me-2"
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
+                name="query"
               />
               <button class="btn btn-outline-primary" type="submit">
                 Search
@@ -94,14 +106,13 @@
             </form>
           </div>
 
-          <!-- Botones al final -->
-          <div class="d-flex ms-auto" th:unless="${hayUsuario}">
-            <button class="btn btn-danger me-2 nowrap" type="button">
-              <a href="/login" class="link-pers">Sign in</a>
-            </button>
-            <button class="btn btn-sm btn-link nowrap" type="button">
-              <a href="/register" class="link-primary">Sign up</a>
-            </button>
+          <!-- Botones de la sesión -->
+          <div
+            class="d-flex ms-auto align-items-center"
+            th:unless="${hayUsuario}"
+          >
+            <a href="/login" class="btn btn-danger me-2 nowrap">Sign in</a>
+            <a href="/register" class="btn btn-link nowrap">Sign up</a>
           </div>
 
           <!-- Perfil usuario -->
@@ -146,6 +157,19 @@
     </nav>
 
     <main class="container">
+      <!-- Mostrar mensaje si NO hay posts -->
+      <div
+        th:if="${listaPosts.isEmpty()}"
+        class="alert alert-info text-center"
+        role="alert"
+      >
+        <h4 class="alert-heading">Oops!</h4>
+        <p>We couldn't find any posts matching your search.</p>
+        <hr />
+        <p class="mb-0">
+          Try searching with different keywords or explore our categories.
+        </p>
+      </div>
       <!-- Mostrar mensaje si NO hay usuario -->
       <div
         class="alert alert-info d-none px-0"
@@ -159,12 +183,7 @@
       <section class="container-lg mb-4 mt-4">
         <div class="d-flex justify-content-between align-items-center">
           <!-- Botón a la izquierda -->
-          <button
-            class="btn btn-outline-primary"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#newPostModal"
-          >
+          <button class="btn btn-outline-primary" type="button" id="btnNewPost">
             <i class="fa-solid fa-plus"></i>
             New Post
           </button>
@@ -242,7 +261,7 @@
 
               <button
                 class="btn btn-sm btn-outline-secondary comment-container"
-                th:onclick="|goToPostAndFocusComment(${post.id})|"
+                th:onclick="|goToPostAndFocusComment(${post.id}, this)|"
               >
                 <i class="fa-regular fa-comment"></i>
                 <span th:text="${post.comments}" class="ms-1"></span>
@@ -333,14 +352,6 @@
                     ></option>
                   </select>
                 </div>
-                <!-- Este input invisible es el que se enviará con el form -->
-                <input
-                  type="hidden"
-                  name="content"
-                  id="hiddenContent"
-                  th:field="*{content}"
-                  required
-                />
               </div>
 
               <div class="modal-footer">
@@ -409,6 +420,6 @@
       window.hayUsuario = [[${hayUsuario}]];
     </script>
 
-    <script src="/js/scripts.js" defer></script>
+    <script src="/js/scripts.js"></script>
   </body>
 </html>

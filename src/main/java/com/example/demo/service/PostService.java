@@ -12,4 +12,12 @@ public interface PostService {
 	void save(PostDTO postDTO);
 
 	void delete(PostDTO postDTO);
+
+	List<PostDTO> searchByTitle(String searchText);
+
+	List<PostDTO> searchByContent(String searchText);
+
+	List<PostDTO> searchByCategory(String categoryName);
+
+	List<PostDTO> searchByTitleThenContent(String trim);
 }

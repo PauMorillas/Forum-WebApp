@@ -1,5 +1,4 @@
-const btnsLike = document.getElementsByClassName("like-container");
-const btnsComment = document.getElementsByClassName("comment-container");
+// --- Variables Globales y Selectores Iniciales ---
 
 const csrfToken = document
   .querySelector('meta[name="_csrf"]')
@@ -8,130 +7,170 @@ const csrfHeader = document
   .querySelector('meta[name="_csrf_header"]')
   .getAttribute("content");
 
-const quillContainer = document.getElementById("quill-editor");
+// --- Referencias a elementos comunes del DOM que se necesitarán en el script ---
+// Se inicializarán dentro de DOMContentLoaded para asegurar que existan.
+let loginAlert;
+let newPostModalElement;
+let newPostModal;
+let newPostBtn;
+let quillEditor;
+let quillFormPost;
+let quillHiddenInput;
 
-if (quillContainer) {
-  const quill = new Quill("#quill-editor", {
-    theme: "snow",
-  });
+// --- Funciones auxiliares ---
 
-  const formPost = document.getElementById("formPost");
-  const hiddenInput = document.getElementById("hiddenContent");
-
-  if (formPost && hiddenInput) {
-    formPost.addEventListener("submit", function () {
-      hiddenInput.value = quill.root.innerHTML; // Copiamos el HTML en ese campo
-    });
+/**
+ * Muestra la alerta de inicio de sesión con un mensaje específico.
+ */
+function showLoginAlert(message) {
+  if (loginAlert) {
+    loginAlert.innerHTML = message;
+    loginAlert.classList.remove("d-none");
+    loginAlert.focus();
   }
 }
 
-Array.from(btnsLike).forEach((btn) => {
-  btn.addEventListener("click", function () {
-    if (!window.hayUsuario) {
-      btn.classList.add("btn-no-action");
-    } else {
-      const icon = btn.querySelector("i");
+/**
+ * Oculta la alerta de inicio de sesión.
+ */
+function hideLoginAlert() {
+  if (loginAlert && !loginAlert.classList.contains("d-none")) {
+    loginAlert.classList.add("d-none");
+  }
+}
 
-      icon.classList.toggle("fa-regular");
-      icon.classList.toggle("fa-solid");
+/**
+ * Maneja la animación de un icono (cambio de clase y animación).
+ */
+function animateIconToggle(icon) {
+  icon.classList.toggle("fa-regular");
+  icon.classList.toggle("fa-solid");
+  icon.classList.add("icon-animate");
+  icon.addEventListener(
+    "animationend",
+    function handler() {
+      icon.classList.remove("icon-animate");
+      icon.removeEventListener("animationend", handler);
+    },
+    { once: true }
+  );
+}
 
-      // Clase con la animación
-      icon.classList.add("icon-animate");
-
-      icon.addEventListener("animationend", function handler() {
-        icon.classList.remove("icon-animate");
-        icon.removeEventListener("animationend", handler); // Evitamos duplicación
-      });
-    }
-  });
-});
-
-Array.from(btnsComment).forEach((btn) => {
-  btn.addEventListener("click", function () {
-    if (!window.hayUsuario) {
-      const loginAlert = document.getElementById("loginAlert");
-      btn.classList.add("btn-no-action");
-      loginAlert.classList.remove("d-none");
-      loginAlert.innerHTML = `
-  You should sign in before comment a post.
-  <a href="/login" class="alert-link">Sign in here</a> ; ]
-`;
-      loginAlert.focus();
-    } else {
-      const icon = btn.querySelector("i");
-
-      icon.classList.toggle("fa-regular");
-      icon.classList.toggle("fa-solid");
-
-      icon.classList.add("icon-animate");
-
-      icon.addEventListener("animationend", function handler() {
-        icon.classList.remove("icon-animate");
-        icon.removeEventListener("animationend", handler);
-      });
-    }
-  });
-});
-
-// Oculta el toast de bienvenida
-
+// --- Lógica Principal al Cargar el DOM ---
 document.addEventListener("DOMContentLoaded", () => {
+  // 1. Inicialización de Elementos del DOM
+  loginAlert = document.getElementById("loginAlert");
+  newPostBtn = document.getElementById("btnNewPost");
+  newPostModalElement = document.getElementById("newPostModal");
+  quillEditor = document.getElementById("quill-editor");
+  quillFormPost = document.getElementById("formPost");
+  quillHiddenInput = document.getElementById("hiddenContent");
+
+  // Inicializar el modal de Bootstrap
+  if (newPostModalElement) {
+    newPostModal = new bootstrap.Modal(newPostModalElement);
+  }
+
+  // 2. Lógica para el Editor Quill (si lo hay en la página)
+  if (quillEditor) {
+    const quill = new Quill("#quill-editor", {
+      theme: "snow",
+    });
+
+    if (quillFormPost && quillHiddenInput) {
+      quillFormPost.addEventListener("submit", () => {
+        quillHiddenInput.value = quill.root.innerHTML;
+      });
+    }
+  }
+
+  // 3. Lógica para el botón "New Post" y la validación de usuario
+  if (newPostBtn) {
+    newPostBtn.addEventListener("click", (e) => {
+      if (!window.hayUsuario) {
+        e.preventDefault(); // Evita que Bootstrap intente abrir el modal
+        showLoginAlert(`
+                    You should sign in before posting.
+                    <a href="/login" class="alert-link"> Sign in here</a> ; ]
+                `);
+      } else {
+        newPostModal.show(); // Abre el modal solo si hay usuario
+      }
+    });
+  }
+
+  // 4. Manejo de la visibilidad de la alerta de login
+  // Oculta el alert de login si se hace clic fuera de él
+  document.body.addEventListener("click", (e) => {
+    // Si la alerta está visible y el clic no fue dentro de la alerta misma
+    // Y el clic no fue en el botón "New Post" (ya que tiene su propia lógica)
+    // Y el clic NO fue dentro de un contenedor de like o comentario (para no ocultarla inmediatamente)
+    if (
+      loginAlert &&
+      !loginAlert.classList.contains("d-none") &&
+      !loginAlert.contains(e.target) &&
+      e.target !== newPostBtn &&
+      !e.target.closest(".like-container") && // Excluye clics en el botón de like
+      !e.target.closest(".comment-container") // Excluye clics en el botón de comentario
+    ) {
+      hideLoginAlert();
+    }
+  });
+
+  // Oculta la alerta de login si el modal de newPost se muestra
+  if (newPostModalElement) {
+    newPostModalElement.addEventListener("show.bs.modal", hideLoginAlert);
+  }
+
+  // 5. Ocultar el toast de bienvenida
   const toastEl = document.getElementById("welcomeToast");
   const wrapper = document.getElementById("toastWrapper");
 
   if (toastEl && wrapper) {
     wrapper.removeAttribute("hidden");
-
     const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
 
     toastEl.addEventListener("hide.bs.toast", (event) => {
-      event.preventDefault(); // Interceptamos
+      event.preventDefault();
       toastEl.classList.add("fade-out");
-
       setTimeout(() => {
         toastEl.classList.remove("fade-out");
         toast.hide();
-        wrapper.setAttribute("hidden", ""); // Lo ocultamos del DOM tras ocultarse
+        wrapper.setAttribute("hidden", "");
       }, 1000);
     });
-
     toast.show();
   }
-});
 
-// Muestra el alert del login dinámicamente
-document.addEventListener("DOMContentLoaded", () => {
-  const loginAlert = document.getElementById("loginAlert");
-  if (!loginAlert) return;
-
-  // Guardamos el contenido original para poder restaurarlo después
-  const originalLoginAlertHTML = loginAlert.innerHTML;
-
-  // Cuando se haga click en new post
-  const newPostBtn = document.querySelector('[data-bs-target="#newPostModal"]');
-  if (newPostBtn && !window.hayUsuario) {
-    newPostBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      loginAlert.innerHTML = originalLoginAlertHTML; // Restauramos contenido original
-      loginAlert.classList.remove("d-none");
-      loginAlert.classList.add("show");
-    });
+  // 6. Enfoque en el textarea de comentarios al cargar la página de post-info
+  if (window.location.hash === "#comment-textarea") {
+    const textarea = document.getElementById("comment-textarea");
+    if (textarea) {
+      textarea.focus();
+    }
   }
 });
 
-// Cambia el estado de un boton según si se le dio like al post
+// --- Funciones de Interacción (Likes y Comentarios) ---
+// Estas funciones se llaman directamente desde el HTML usando th:onclick.
+
+/**
+ * Cambia el estado de like de un post y actualiza la UI.
+ * @param {number} postId El ID del post.
+ * @param {HTMLElement} button El botón del like (this).
+ */
 function toggleLike(postId, button) {
-  const loginAlert = document.getElementById("loginAlert");
   if (!window.hayUsuario) {
-    loginAlert.classList.remove("d-none");
-    loginAlert.innerHTML = `
-  You should sign in before liking a post.
-  <a href="/login" class="alert-link">Sign in here</a> ; ]
-`;
-    loginAlert.focus();
-
-    return; // Salimos de la funcion sin hacer nada más
+    showLoginAlert(`
+            You should sign in before liking a post.
+            <a href="/login" class="alert-link">Sign in here</a> ; ]
+        `);
+    button.classList.add("btn-no-action"); // Aplica la clase si no hay usuario
+    return; // Salimos de la función sin hacer la llamada API
   }
+
+  // Animación inmediata al hacer clic (solo si hay usuario y la lógica procede)
+  animateIconToggle(button.querySelector("i"));
 
   fetch("/likes/toggle", {
     method: "POST",
@@ -142,39 +181,37 @@ function toggleLike(postId, button) {
     body: JSON.stringify({ postId: postId }),
   })
     .then((res) => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        // Si la API falla, revertimos la animación del icono
+        const icon = button.querySelector("i");
+        icon.classList.toggle("fa-regular");
+        icon.classList.toggle("fa-solid");
+        throw new Error(`HTTP ${res.status}`);
+      }
       return res.json();
     })
     .then((data) => {
-      const icon = button.querySelector("i");
       const countSpan = button.querySelector("span");
-
-      if (data.liked) {
-        icon.classList.remove("fa-regular");
-        icon.classList.add("fa-solid");
-      } else {
-        icon.classList.remove("fa-solid");
-        icon.classList.add("fa-regular");
-      }
-
       countSpan.textContent = data.totalLikes;
     })
     .catch((err) => console.error("Error al hacer like:", err));
 }
 
-// Para redirigir a la view del post cuando se le de a comment
-function goToPostAndFocusComment(postId) {
-  if (hayUsuario) {
-    // Redirige a la vista del post
-    window.location.href = "/posts/" + postId + "#comment-textarea";
+/**
+ * Redirige a la vista del post y enfoca el área de comentarios.
+ * @param {number} postId El ID del post.
+ * @param {HTMLElement} button El botón del comentario (this). <--- ¡Nuevo parámetro!
+ */
+function goToPostAndFocusComment(postId, button) {
+  if (!window.hayUsuario) {
+    showLoginAlert(`
+            You should sign in before commenting on a post.
+            <a href="/login" class="alert-link">Sign in here</a> ; ]
+        `);
+    // Ahora sí podemos aplicar la clase porque recibimos el botón
+    button.classList.add("btn-no-action");
+    return; // Salimos de la función si no hay usuario
   }
+  // Si hay usuario, redirige
+  window.location.href = `/posts/${postId}#comment-textarea`;
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-  if (window.location.hash === "#comentario-textarea") {
-    const textarea = document.getElementById("comentario-textarea");
-    if (textarea) {
-      textarea.focus();
-    }
-  }
-});

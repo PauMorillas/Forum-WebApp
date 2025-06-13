@@ -16,4 +16,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@EntityGraph(attributePaths = { "category", "client" })
     List<Post> findAll();
+
+	List<Post> findByTitleContainingIgnoreCase(String title);
+
+	List<Post> findByContentContainingIgnoreCase(String content);
+
+	List<Post> findByCategoryNameContainingIgnoreCase(String categoryName);
 }
